@@ -10,7 +10,7 @@ services:
       - key: API_HELPER_ENABLED
         value: "true"
       - key: API_ALLOWED_ORIGIN
-        sync: false
+        value: https://francisco-kate-lab6-frontend.onrender.com,http://localhost:5173,http://localhost:5174
       - key: DB_DRIVER
         value: mysql
       - key: DB_CHARSET

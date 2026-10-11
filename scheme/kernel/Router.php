@@ -437,10 +437,14 @@ class Router
             $url = '/' . $url;
         }
 
+        $is_api_request = $url === '/api' || strpos($url, '/api/') === 0;
         if ($method === 'OPTIONS') {
             handle_cors();
             http_response_code(204);
             exit;
+        }
+        if ($is_api_request) {
+            handle_cors();
         }
 
         // Security check for permitted characters
