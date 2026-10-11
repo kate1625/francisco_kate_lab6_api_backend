@@ -1,0 +1,7 @@
+.env
+vendor/
+runtime/*
+!runtime/.htaccess
+!runtime/index.html
+*.log
+*.cache

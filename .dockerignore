@@ -1,0 +1,6 @@
+.env
+.git
+.github
+vendor
+runtime/cache
+runtime/logs
