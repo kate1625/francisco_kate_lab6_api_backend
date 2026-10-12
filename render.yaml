@@ -16,7 +16,7 @@ services:
       - key: DB_CHARSET
         value: utf8mb4
       - key: DB_SSL_MODE
-        value: REQUIRED
+        value: VERIFY_IDENTITY
       - key: DB_HOST
         sync: false
       - key: DB_PORT
@@ -28,7 +28,7 @@ services:
       - key: DB_NAME
         sync: false
       - key: DB_SSL_CA
-        value: /etc/ssl/certs/ca-certificates.crt
+        value: /var/www/html/certs/aiven-ca.pem
       - key: JWT_SECRET
         sync: false
       - key: REFRESH_TOKEN_KEY
