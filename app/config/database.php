@@ -57,17 +57,22 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |   Example: $database['another_example'] = array('key' => 'value')
 */
 
+$read_env = static function ($name) {
+    $value = getenv($name);
+    return $value === false ? '' : trim($value);
+};
+
 $database['main'] = array(
-    'driver'	=> getenv('DB_DRIVER') ?: '',
-    'hostname'	=> getenv('DB_HOST') ?: '',
-    'port'		=> getenv('DB_PORT') ?: '',
-    'username'	=> getenv('DB_USER') ?: '',
-    'password'	=> getenv('DB_PASSWORD') ?: '',
-    'database'	=> getenv('DB_NAME') ?: '',
-    'charset'	=> getenv('DB_CHARSET') ?: '',
-    'dbprefix'	=> getenv('DB_PREFIX') ?: '',
-    'ssl_ca'    => getenv('DB_SSL_CA') ?: '',
-    'ssl_mode'  => strtoupper(getenv('DB_SSL_MODE') ?: ''),
+    'driver'	=> $read_env('DB_DRIVER'),
+    'hostname'	=> $read_env('DB_HOST'),
+    'port'		=> $read_env('DB_PORT'),
+    'username'	=> $read_env('DB_USER'),
+    'password'	=> $read_env('DB_PASSWORD'),
+    'database'	=> $read_env('DB_NAME'),
+    'charset'	=> $read_env('DB_CHARSET'),
+    'dbprefix'	=> $read_env('DB_PREFIX'),
+    'ssl_ca'    => $read_env('DB_SSL_CA'),
+    'ssl_mode'  => strtoupper($read_env('DB_SSL_MODE')),
     // Optional for SQLite
     'path'      => ''
 );
@@ -76,6 +81,15 @@ $database['main'] = array(
 // configuration works from the CLI and from the web server.
 if ($database['main']['ssl_ca'] !== '' && !preg_match('~^(?:[A-Za-z]:[\\\\/]|/)~', $database['main']['ssl_ca'])) {
     $database['main']['ssl_ca'] = ROOT_DIR . ltrim($database['main']['ssl_ca'], '/\\\\');
+}
+
+// Render runs on Linux. If a local Windows CA path (or any stale path) was
+// copied into its environment, use the Aiven CA bundled with this backend.
+$bundled_ca = ROOT_DIR . 'certs' . DIRECTORY_SEPARATOR . 'aiven-ca.pem';
+if (!is_file($database['main']['ssl_ca']) || !is_readable($database['main']['ssl_ca'])) {
+    if (is_file($bundled_ca) && is_readable($bundled_ca)) {
+        $database['main']['ssl_ca'] = $bundled_ca;
+    }
 }
 
 ?>
