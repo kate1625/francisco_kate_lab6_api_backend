@@ -72,4 +72,10 @@ $database['main'] = array(
     'path'      => ''
 );
 
+// Resolve relative CA bundle paths from the backend root so the same
+// configuration works from the CLI and from the web server.
+if ($database['main']['ssl_ca'] !== '' && !preg_match('~^(?:[A-Za-z]:[\\\\/]|/)~', $database['main']['ssl_ca'])) {
+    $database['main']['ssl_ca'] = ROOT_DIR . ltrim($database['main']['ssl_ca'], '/\\\\');
+}
+
 ?>

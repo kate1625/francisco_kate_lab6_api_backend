@@ -1,5 +1,25 @@
 <?php
 define('PREVENT_DIRECT_ACCESS', TRUE);
+
+// CORS must run before LavaLust routing so browser preflight requests are
+// answered even though OPTIONS is not an application route.
+$allowedOrigins = array_values(array_filter(array_map(
+    'trim',
+    explode(',', getenv('API_ALLOWED_ORIGIN') ?: '')
+)));
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if ($requestOrigin !== '' && in_array($requestOrigin, $allowedOrigins, true)) {
+    header('Access-Control-Allow-Origin: ' . $requestOrigin);
+    header('Vary: Origin', false);
+}
+header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Accept, Content-Type, Authorization');
+header('Access-Control-Max-Age: 86400');
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
 /**
  * ------------------------------------------------------------------
  * LavaLust - an opensource lightweight PHP MVC Framework
